@@ -3,6 +3,8 @@
 use Adianti\Control\TAction;
 use Adianti\Control\TPage;
 use Adianti\Control\TWindow;
+use Adianti\Database\TCriteria;
+use Adianti\Database\TFilter;
 use Adianti\Validator\TRequiredValidator;
 use Adianti\Widget\Container\TVBox;
 use Adianti\Widget\Form\TEntry;
@@ -32,7 +34,7 @@ class ProdutosForm extends TWindow
 
 
     $this->setDatabase('grafica');              // defines the database
-    $this->setActiveRecord('Produtos');     // defines the active record
+    $this->setActiveRecord('Produto');     // defines the active record
 
     // creates the form
     $this->form = new BootstrapFormBuilder('form_Produtos');
@@ -40,13 +42,17 @@ class ProdutosForm extends TWindow
     $this->form->setClientValidation(TRUE);
 
 
+    $filtro = new TCriteria;
+    $filtro->add(new TFilter('ativo', '=', 'Y'));
 
     // create the form fields
     $id = new TEntry('id');
     $nome = new TEntry('nome');
     $observacao = new TEntry('observacao');
-    $unidade_id = new TDBCombo('unidade_id', 'grafica', 'Unidade', 'id', 'nome');
-    $categoria_id = new TDBCombo('categoria_id', 'grafica', 'Categoria', 'id', 'nome');
+    $unidade_id = new TDBCombo('unidade_id', 'grafica', 'Unidade', 'id', 'nome', 'nome', $filtro);
+
+
+    $categoria_id = new TDBCombo('categoria_id', 'grafica', 'Categoria', 'id', 'nome', 'nome', $filtro);
     $valor_compra = new TNumeric('valor_compra', 2, ',', '.', true);
     $valor_minimo = new TNumeric('valor_minimo', 2, ',', '.', true);
     $valor_venda = new TNumeric('valor_venda', 2, ',', '.', true);
@@ -58,6 +64,8 @@ class ProdutosForm extends TWindow
 
     $unidade_id->enableSearch();
     $categoria_id->enableSearch();
+
+    $categoria_id->setChangeAction(new TAction([$this, 'onChangeCategoria']));
 
 
     // add the fields
@@ -111,8 +119,65 @@ class ProdutosForm extends TWindow
     parent::add($container);
   }
 
+  public function onEdit($param)
+  {
+    $this->form->setFormTitle('EDITAR PRODUTOS');
+    try {
+      if (isset($param['key'])) {
+        $key = $param['key'];
+        TTransaction::open('grafica');
+        $object = new Produto($key);
+        $this->form->setData($object);
+        TTransaction::close();
+      } else {
+        $this->form->setFormTitle('CRIAR NOVO PRODUTO');
+        $this->form->clear(TRUE);
+      }
+    } catch (Exception $e) {
+      new TMessage('error', $e->getMessage());
+      TTransaction::rollback();
+    }
+  }
+
+
+  /**
+   * Save form data
+   * @param $param Request
+   */
+  public function onSave($param)
+  {
+    try {
+      TTransaction::open('grafica'); // open a transaction
+
+      $this->form->validate(); // validate form data
+      $data = $this->form->getData(); // get form data as array
+
+      $object = new Produto;  // create an empty object
+      $object->fromArray((array) $data); // load the object with data
+      $object->store(); // save the object
+
+      // get the generated id
+      $data->id = $object->id;
+
+      $this->form->setData($data); // fill form data
+      TTransaction::close(); // close the transaction
+
+      $action = new TAction(array('ProdutosList', 'onReload'));
+      new TMessage('info', AdiantiCoreTranslator::translate('Record saved'), $action);
+    } catch (Exception $e) // in case of exception
+    {
+      new TMessage('error', $e->getMessage()); // shows the exception error message
+      $this->form->setData($this->form->getData()); // keep form data
+      TTransaction::rollback(); // undo all pending operations
+    }
+  }
+
   public static function onClose()
   {
     parent::closeWindow();
+  }
+  public static function onChangeCategoria($param)
+  {
+    var_dump($param);
   }
 }

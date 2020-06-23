@@ -135,9 +135,11 @@ class CategoriaList extends TPage
 
     $action1 = new TDataGridAction(['CategoriaForm', 'onEdit'], ['id' => '{id}']);
     $action2 = new TDataGridAction([$this, 'onDelete'], ['id' => '{id}']);
+    $action3 = new TDataGridAction([$this, 'toggleAtivo'], ['id' => '{id}']);
 
     $this->datagrid->addAction($action1, _t('Edit'),   'far:edit blue');
     $this->datagrid->addAction($action2, _t('Delete'), 'far:trash-alt red');
+    $this->datagrid->addAction($action3, 'Ativar/Desativar',   'fa:power-off orange');
 
     // create the datagrid model
     $this->datagrid->createModel();
@@ -166,5 +168,23 @@ class CategoriaList extends TPage
     $container->add($panel);
 
     parent::add($container);
+  }
+  public function toggleAtivo($param)
+  {
+    try {
+      TTransaction::open('grafica');
+      $categoria = Categoria::find($param['id']);
+
+      if ($categoria instanceof Categoria) {
+        $categoria->ativo = $categoria->ativo == 'Y' ? 'N' : 'Y';
+        $categoria->store();
+      }
+      TTransaction::close();
+
+      $this->onReload($param);
+    } catch (Exception $e) {
+      new TMessage('error', $e->getMessage());
+      TTransaction::rollback();
+    }
   }
 }

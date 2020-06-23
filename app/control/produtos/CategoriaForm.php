@@ -3,6 +3,7 @@
 use Adianti\Control\TAction;
 use Adianti\Control\TPage;
 use Adianti\Validator\TRequiredValidator;
+use Adianti\Widget\Dialog\TMessage;
 use Adianti\Widget\Form\TEntry;
 use Adianti\Widget\Form\TLabel;
 use Adianti\Wrapper\BootstrapFormBuilder;
@@ -90,7 +91,6 @@ class CategoriaForm extends TPage
     try {
       TTransaction::open('grafica'); // open a transaction
 
-
       $this->form->validate(); // validate form data
       $data = $this->form->getData(); // get form data as array
 
@@ -104,7 +104,8 @@ class CategoriaForm extends TPage
       $this->form->setData($data); // fill form data
       TTransaction::close(); // close the transaction
 
-      new TMessage('info', AdiantiCoreTranslator::translate('Record saved'));
+      $action = new TAction(array('CategoriaList', 'onReload'));
+      new TMessage('info', AdiantiCoreTranslator::translate('Record saved'), $action);
     } catch (Exception $e) // in case of exception
     {
       new TMessage('error', $e->getMessage()); // shows the exception error message

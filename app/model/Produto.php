@@ -4,9 +4,9 @@ use Adianti\Database\TRecord;
 
 /**
  * Produtos Active Record
- * @author  <your-name-here>
+ * @author  <Kásio Eduardos>
  */
-class Produtos extends TRecord
+class Produto extends TRecord
 {
   const TABLENAME = 'produtos';
   const PRIMARYKEY = 'id';

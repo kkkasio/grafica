@@ -1,5 +1,18 @@
 <?php
 
+use Adianti\Control\TAction;
+use Adianti\Control\TPage;
+use Adianti\Registry\TSession;
+use Adianti\Widget\Base\TElement;
+use Adianti\Widget\Container\TPanelGroup;
+use Adianti\Widget\Datagrid\TDataGrid;
+use Adianti\Widget\Datagrid\TDataGridAction;
+use Adianti\Widget\Datagrid\TDataGridColumn;
+use Adianti\Widget\Datagrid\TPageNavigation;
+use Adianti\Widget\Form\TLabel;
+use Adianti\Wrapper\BootstrapDatagridWrapper;
+use Adianti\Wrapper\BootstrapFormBuilder;
+
 /**
  * UnidadeList Listing
  * @author  <your name here>
@@ -77,7 +90,15 @@ class UnidadeList extends TPage
     $column_created_at = new TDataGridColumn('created_at', 'Criado em', 'left');
     $column_updated_at = new TDataGridColumn('updated_at', 'Última Atualização', 'left');
 
-    $column_ativo->setTransformer(function ($value, $object, $row) {
+    $column_id->setTransformer(function ($value, $object, $row) {
+      if ($object->ativo == 'N') {
+        $row->style = 'color: silver';
+      }
+
+      return $value;
+    });
+
+    $column_ativo->setTransformer(function ($value) {
 
       if ($value == 'Y') {
         $div = new TElement('span');
@@ -137,9 +158,11 @@ class UnidadeList extends TPage
 
     $action1 = new TDataGridAction(['UnidadeForm', 'onEdit'], ['id' => '{id}']);
     $action2 = new TDataGridAction([$this, 'onDelete'], ['id' => '{id}']);
+    $action3 = new TDataGridAction([$this, 'toggleAtivo'], ['id' => '{id}']);
 
     $this->datagrid->addAction($action1, _t('Edit'),   'far:edit blue');
     $this->datagrid->addAction($action2, _t('Delete'), 'far:trash-alt red');
+    $this->datagrid->addAction($action3, 'Ativar/Desativar',   'fa:power-off orange');
 
     // create the datagrid model
     $this->datagrid->createModel();
@@ -168,5 +191,23 @@ class UnidadeList extends TPage
     $container->add($panel);
 
     parent::add($container);
+  }
+  public function toggleAtivo($param)
+  {
+    try {
+      TTransaction::open('grafica');
+      $unidade = Unidade::find($param['id']);
+
+      if ($unidade instanceof Unidade) {
+        $unidade->ativo = $unidade->ativo == 'Y' ? 'N' : 'Y';
+        $unidade->store();
+      }
+      TTransaction::close();
+
+      $this->onReload($param);
+    } catch (Exception $e) {
+      new TMessage('error', $e->getMessage());
+      TTransaction::rollback();
+    }
   }
 }
