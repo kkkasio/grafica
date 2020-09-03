@@ -1,8 +1,24 @@
 <?php
 
+use Adianti\Control\TAction;
 use Adianti\Control\TPage;
 use Adianti\Database\TTransaction;
+use Adianti\Registry\TSession;
+use Adianti\Widget\Base\TElement;
+use Adianti\Widget\Container\TPanelGroup;
+use Adianti\Widget\Container\TVBox;
+use Adianti\Widget\Datagrid\TDataGrid;
 use Adianti\Widget\Datagrid\TDataGridAction;
+use Adianti\Widget\Datagrid\TDataGridColumn;
+use Adianti\Widget\Datagrid\TPageNavigation;
+use Adianti\Widget\Dialog\TMessage;
+use Adianti\Widget\Form\TEntry;
+use Adianti\Widget\Form\TLabel;
+use Adianti\Widget\Form\TRadioGroup;
+use Adianti\Widget\Util\TDropDown;
+use Adianti\Widget\Wrapper\TDBCombo;
+use Adianti\Wrapper\BootstrapDatagridWrapper;
+use Adianti\Wrapper\BootstrapFormBuilder;
 
 /**
  * ProdutosList Listing
@@ -129,7 +145,7 @@ class ProdutosList extends TPage
 
     $column_ativo->setTransformer(function ($value, $object, $row) {
 
-      if ($value == 'Y') {
+      if ($value == 'S') {
         $div = new TElement('span');
         $div->class = "label label-success";
         $div->style = "text-shadow:none; font-size:13px";
@@ -161,7 +177,7 @@ class ProdutosList extends TPage
       if ($value) {
         try {
           $date = new DateTime($value);
-          return $date->format('d/m/Y hh:mm');
+          return $date->format('d/m/Y hh:m');
         } catch (Exception $e) {
           return $value;
         }
@@ -237,7 +253,7 @@ class ProdutosList extends TPage
       $produto = Produto::find($param['id']);
 
       if ($produto instanceof Produto) {
-        $produto->ativo = $produto->ativo == 'Y' ? 'N' : 'Y';
+        $produto->ativo = $produto->ativo == 'S' ? 'N' : 'S';
         $produto->store();
       }
       TTransaction::close();

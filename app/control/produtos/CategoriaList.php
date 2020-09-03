@@ -2,7 +2,21 @@
 
 use Adianti\Control\TAction;
 use Adianti\Control\TPage;
+use Adianti\Database\TTransaction;
+use Adianti\Registry\TSession;
+use Adianti\Widget\Base\TElement;
+use Adianti\Widget\Container\TPanelGroup;
+use Adianti\Widget\Container\TVBox;
+use Adianti\Widget\Datagrid\TDataGrid;
+use Adianti\Widget\Datagrid\TDataGridAction;
+use Adianti\Widget\Datagrid\TDataGridColumn;
+use Adianti\Widget\Datagrid\TPageNavigation;
+use Adianti\Widget\Dialog\TMessage;
+use Adianti\Widget\Form\TEntry;
 use Adianti\Widget\Form\TLabel;
+use Adianti\Widget\Form\TRadioGroup;
+use Adianti\Widget\Util\TDropDown;
+use Adianti\Wrapper\BootstrapDatagridWrapper;
 use Adianti\Wrapper\BootstrapFormBuilder;
 
 /**
@@ -82,6 +96,14 @@ class CategoriaList extends TPage
     $column_ativo = new TDataGridColumn('ativo', 'Ativo', 'left');
     $column_created_at = new TDataGridColumn('created_at', 'Criado em', 'left');
     $column_updated_at = new TDataGridColumn('updated_at', 'Última Atualização', 'left');
+
+    $column_id->setTransformer(function ($value, $object, $row) {
+      if ($object->ativo == 'N') {
+        $row->style = 'color: silver';
+      }
+
+      return $value;
+    });
 
     $column_ativo->setTransformer(function ($value, $object, $row) {
 
