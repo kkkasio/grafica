@@ -3,14 +3,14 @@
 use Adianti\Database\TRecord;
 
 /**
- * Telefones Active Record
- * @author  <Kásio Eduardo>
+ * VendaItem Active Record
+ * @author  <your-name-here>
  */
-class Telefone extends TRecord
+class VendaItem extends TRecord
 {
-	const TABLENAME  = 'telefones';
+	const TABLENAME  = 'venda_item';
 	const PRIMARYKEY = 'id';
-	const IDPOLICY   = 'max'; // {max, serial}
+	const IDPOLICY   =  'max'; // {max, serial}
 	const CREATEDAT  = 'created_at';
 	const UPDATEDAT  = 'updated_at';
 
@@ -21,10 +21,10 @@ class Telefone extends TRecord
 	public function __construct($id = NULL, $callObjectLoad = TRUE)
 	{
 		parent::__construct($id, $callObjectLoad);
-		parent::addAttribute('cliente_id');
-		parent::addAttribute('tipo');
-		parent::addAttribute('ddd');
-		parent::addAttribute('numero');
+		parent::addAttribute('venda_id');
+		parent::addAttribute('produto_id');
+		parent::addAttribute('quantidade');
+		parent::addAttribute('preco');
 		parent::addAttribute('created_at');
 		parent::addAttribute('updated_at');
 	}
