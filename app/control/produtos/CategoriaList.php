@@ -60,9 +60,9 @@ class CategoriaList extends TPage
     $nome = new TEntry('nome');
     $ativo = new TRadioGroup('ativo');
 
-    $ativo->addItems(['Y' => 'Sim', 'N' => 'Não']);
+    $ativo->addItems(['S' => 'Sim', 'N' => 'Não']);
     $ativo->setLayout('horizontal');
-    $ativo->setValue('Y');
+    $ativo->setValue('S');
 
 
     // add the fields    
@@ -107,7 +107,7 @@ class CategoriaList extends TPage
 
     $column_ativo->setTransformer(function ($value, $object, $row) {
 
-      if ($value == 'Y') {
+      if ($value == 'S') {
         $div = new TElement('span');
         $div->class = "label label-success";
         $div->style = "text-shadow:none; font-size:13px";

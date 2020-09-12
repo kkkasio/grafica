@@ -100,7 +100,7 @@ class UnidadeList extends TPage
 
     $column_ativo->setTransformer(function ($value) {
 
-      if ($value == 'Y') {
+      if ($value == 'S') {
         $div = new TElement('span');
         $div->class = "label label-success";
         $div->style = "text-shadow:none; font-size:13px";

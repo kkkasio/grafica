@@ -38,9 +38,9 @@ class UnidadeForm extends TPage
     $sigla = new TEntry('sigla');
     $ativo = new TRadioGroup('ativo');
 
-    $ativo->addItems(['Y' => 'Sim', 'N' => 'Não']);
+    $ativo->addItems(['S' => 'Sim', 'N' => 'Não']);
     $ativo->setLayout('horizontal');
-    $ativo->setValue('Y');
+    $ativo->setValue('S');
 
     // add the fields
     $this->form->addFields([new TLabel('#')], [$id]);

@@ -43,7 +43,7 @@ class ProdutosForm extends TWindow
 
 
     $filtro = new TCriteria;
-    $filtro->add(new TFilter('ativo', '=', 'Y'));
+    $filtro->add(new TFilter('ativo', '=', 'S'));
 
     // create the form fields
     $id = new TEntry('id');
@@ -65,7 +65,7 @@ class ProdutosForm extends TWindow
     $unidade_id->enableSearch();
     $categoria_id->enableSearch();
 
-    $categoria_id->setChangeAction(new TAction([$this, 'onChangeCategoria']));
+    //$categoria_id->setChangeAction(new TAction([$this, 'onChangeCategoria']));
 
 
     // add the fields
@@ -178,6 +178,5 @@ class ProdutosForm extends TWindow
   }
   public static function onChangeCategoria($param)
   {
-    var_dump($param);
   }
 }
