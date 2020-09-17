@@ -25,6 +25,7 @@ class VendaItem extends TRecord
 		parent::addAttribute('produto_id');
 		parent::addAttribute('quantidade');
 		parent::addAttribute('preco');
+		parent::addAttribute('total');
 		parent::addAttribute('created_at');
 		parent::addAttribute('updated_at');
 	}

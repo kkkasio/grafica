@@ -1,14 +1,14 @@
 CREATE TABLE system_group (
-    id INTEGER PRIMARY KEY NOT NULL,
+    id bigint(20) PRIMARY KEY NOT NULL,
     name varchar(100));
 
 CREATE TABLE system_program (
-    id INTEGER PRIMARY KEY NOT NULL,
+    id bigint(20) PRIMARY KEY NOT NULL,
     name varchar(100),
     controller varchar(100));
 
 CREATE TABLE system_unit (
-    id INTEGER PRIMARY KEY NOT NULL,
+    id bigint(20) PRIMARY KEY NOT NULL,
     name varchar(100),
     connection_name varchar(100));
 
@@ -18,42 +18,44 @@ CREATE TABLE system_preference (
 );
 
 CREATE TABLE system_user (
-    id INTEGER PRIMARY KEY NOT NULL,
+	 id bigint(20) PRIMARY KEY NOT NULL,
     name varchar(100),
     login varchar(100),
     password varchar(100),
     email varchar(100),
-    frontpage_id int, system_unit_id int references system_unit(id), active char(1),
+    frontpage_id int,
+	 system_unit_id int references system_unit(id),
+	 active char(1),
     FOREIGN KEY(frontpage_id) REFERENCES system_program(id));
-    
+
 CREATE TABLE system_user_unit (
-    id INTEGER PRIMARY KEY NOT NULL,
+    id bigint(20) PRIMARY KEY NOT NULL,
     system_user_id int,
     system_unit_id int,
     FOREIGN KEY(system_user_id) REFERENCES system_user(id),
     FOREIGN KEY(system_unit_id) REFERENCES system_unit(id));
 
 CREATE TABLE system_user_group (
-    id INTEGER PRIMARY KEY NOT NULL,
+    id bigint(20) PRIMARY KEY NOT NULL,
     system_user_id int,
     system_group_id int,
     FOREIGN KEY(system_user_id) REFERENCES system_user(id),
     FOREIGN KEY(system_group_id) REFERENCES system_group(id));
-    
+
 CREATE TABLE system_group_program (
-    id INTEGER PRIMARY KEY NOT NULL,
+    id bigint(20) PRIMARY KEY NOT NULL,
     system_group_id int,
     system_program_id int,
     FOREIGN KEY(system_group_id) REFERENCES system_group(id),
     FOREIGN KEY(system_program_id) REFERENCES system_program(id));
-    
+
 CREATE TABLE system_user_program (
-    id INTEGER PRIMARY KEY NOT NULL,
+    id bigint(20) PRIMARY KEY NOT NULL,
     system_user_id int,
     system_program_id int,
     FOREIGN KEY(system_user_id) REFERENCES system_user(id),
     FOREIGN KEY(system_program_id) REFERENCES system_program(id));
-        
+
 INSERT INTO system_group VALUES(1,'Admin');
 INSERT INTO system_group VALUES(2,'Standard');
 
@@ -124,24 +126,11 @@ INSERT INTO system_group_program VALUES(8,1,9);
 INSERT INTO system_group_program VALUES(9,1,11);
 INSERT INTO system_group_program VALUES(10,1,14);
 INSERT INTO system_group_program VALUES(11,1,15);
-INSERT INTO system_group_program VALUES(12,2,10);
-INSERT INTO system_group_program VALUES(13,2,12);
-INSERT INTO system_group_program VALUES(14,2,13);
-INSERT INTO system_group_program VALUES(15,2,16);
-INSERT INTO system_group_program VALUES(16,2,17);
-INSERT INTO system_group_program VALUES(17,2,18);
-INSERT INTO system_group_program VALUES(18,2,19);
-INSERT INTO system_group_program VALUES(19,2,20);
 INSERT INTO system_group_program VALUES(20,1,21);
-INSERT INTO system_group_program VALUES(21,2,22);
-INSERT INTO system_group_program VALUES(22,2,23);
-INSERT INTO system_group_program VALUES(23,2,24);
-INSERT INTO system_group_program VALUES(24,2,25);
 INSERT INTO system_group_program VALUES(25,1,26);
 INSERT INTO system_group_program VALUES(26,1,27);
 INSERT INTO system_group_program VALUES(27,1,28);
 INSERT INTO system_group_program VALUES(28,1,29);
-INSERT INTO system_group_program VALUES(29,2,30);
 INSERT INTO system_group_program VALUES(30,1,31);
 INSERT INTO system_group_program VALUES(31,1,32);
 INSERT INTO system_group_program VALUES(32,1,33);
@@ -153,7 +142,6 @@ INSERT INTO system_group_program VALUES(38,1,38);
 INSERT INTO system_group_program VALUES(39,1,39);
 INSERT INTO system_group_program VALUES(40,1,40);
 
-INSERT INTO system_user_program VALUES(1,2,7);
 
 CREATE INDEX sys_user_program_idx ON system_user(frontpage_id);
 CREATE INDEX sys_user_group_group_idx ON system_user_group(system_group_id);

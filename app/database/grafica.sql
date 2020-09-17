@@ -31,7 +31,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `categorias` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `nome` varchar(14) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ativo` enum('Y','N') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Y',
+  `ativo` enum('S','N') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Y',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -41,7 +41,7 @@ CREATE TABLE `categorias` (
 --
 
 INSERT INTO `categorias` (`id`, `nome`, `ativo`, `created_at`, `updated_at`) VALUES
-(1, 'Categoria Test', 'Y', '2020-06-18 03:00:00', '2020-06-19 01:10:47'),
+(1, 'Categoria Test', 'S', '2020-06-18 03:00:00', '2020-06-19 01:10:47'),
 (2, 'Categoria 2', 'N', '2020-06-18 07:35:34', '2020-06-18 14:31:37');
 
 -- --------------------------------------------------------
@@ -5858,10 +5858,10 @@ CREATE TABLE `unidades` (
 --
 
 INSERT INTO `unidades` (`id`, `nome`, `sigla`, `ativo`, `created_at`, `updated_at`) VALUES
-(1, 'Unidade', 'UN', 'Y', '2020-06-18 20:12:24', '2020-06-18 20:12:24'),
-(2, 'Kilo', 'Kg', 'Y', '2020-06-18 20:12:24', '2020-06-19 00:41:57'),
-(3, 'Grama', 'G', 'Y', '2020-06-18 20:12:24', '2020-06-19 00:48:41'),
-(4, 'Metro', 'M', 'Y', '2020-06-18 20:12:24', '2020-06-18 20:12:38');
+(1, 'Unidade', 'UN', 'S', '2020-06-18 20:12:24', '2020-06-18 20:12:24'),
+(2, 'Kilo', 'Kg', 'S', '2020-06-18 20:12:24', '2020-06-19 00:41:57'),
+(3, 'Grama', 'G', 'S', '2020-06-18 20:12:24', '2020-06-19 00:48:41'),
+(4, 'Metro', 'M', 'S', '2020-06-18 20:12:24', '2020-06-18 20:12:38');
 
 --
 -- Índices para tabelas despejadas
