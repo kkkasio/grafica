@@ -43,6 +43,28 @@
       </menuitem>
     </menu>
   </menuitem>
+  <menuitem label="Vendas">
+    <icon>fas:money-bill fa-fw</icon>
+    <menu>
+      <menuitem label="Nova Venda">
+        <action>VendaForm</action>
+        <icon>fas:cart-plus fa-fw</icon>
+      </menuitem>
+      <menuitem label="Listar Vendas">
+        <action>VendasList</action>
+        <icon>fas:money-check-alt fa-fw</icon>
+      </menuitem>
+    </menu>
+  </menuitem>
+  <menuitem label="Instalações">
+    <icon>fas:tools fa-fw</icon>
+    <menu>
+      <menuitem label="Agenda">
+        <action>InstalacoesView</action>
+        <icon>fas:book fa-fw</icon>
+      </menuitem>
+    </menu>
+  </menuitem>
   <menuitem label="ADM FW">
     <icon>fas:adjust fa-fw</icon>
     <menu>
