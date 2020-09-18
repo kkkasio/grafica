@@ -436,9 +436,6 @@ class ClienteJuridicoForm extends TPage
 				if ($pessoaJuridica) {
 					$action = new TAction(['ClienteJuridicoForm', 'onEdit'], ['key' => $pessoaJuridica->cliente->id]);
 					new TMessage('info', 'Cliente já cadastrado', $action);
-				} else {
-
-					new TMessage('info', 'Cliente n cadastrado');
 				}
 			}
 		} catch (Exception $e) {
