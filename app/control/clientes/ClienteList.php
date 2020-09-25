@@ -165,7 +165,6 @@ class ClienteList extends TPage
 
 	public static function onView($param)
 	{
-
 		$parametros['key'] = $param['id'];
 
 		if ($param['tipo'] === 'Física') {

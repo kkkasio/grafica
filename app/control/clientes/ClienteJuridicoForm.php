@@ -12,9 +12,7 @@ use Adianti\Widget\Datagrid\TDataGrid;
 use Adianti\Widget\Dialog\TMessage;
 use Adianti\Widget\Form\TButton;
 use Adianti\Widget\Form\TCombo;
-use Adianti\Widget\Form\TDate;
 use Adianti\Widget\Form\TEntry;
-use Adianti\Widget\Form\TFieldList;
 use Adianti\Widget\Form\TForm;
 use Adianti\Widget\Form\TFormSeparator;
 use Adianti\Widget\Form\THidden;
@@ -177,9 +175,9 @@ class ClienteJuridicoForm extends TPage
 		$this->form->addContent([$panel]);
 
 		// create the form actions
-		$btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save');
-		$btn->class = 'btn btn-sm btn-primary';
-		$this->form->addActionLink(_t('New'),  new TAction([$this, 'onEdit']), 'fa:eraser red');
+		$btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save green');
+		//$btn->class = 'btn btn-sm btn-primary';
+		$this->form->addActionLink('Novo Cliente',  new TAction([$this, 'onEdit']), 'fa:eraser red');
 
 		// vertical box container
 		$container = new TVBox;

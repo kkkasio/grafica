@@ -170,7 +170,7 @@ class ClienteForm extends TPage
 		$this->form->addContent([$panel]);
 
 		$this->form->addAction('Save',  new TAction([$this, 'onSave'], ['static' => '1']), 'fa:save green');
-		$this->form->addAction('Clear', new TAction([$this, 'onClear']), 'fa:eraser red');
+		$this->form->addActionLink('Novo Cliente',  new TAction([$this, 'onClear']), 'fa:eraser red');
 
 		// create the page container
 		$container = new TVBox;
