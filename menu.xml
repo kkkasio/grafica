@@ -177,19 +177,6 @@
       </menuitem>
     </menu>
   </menuitem>
-  <menuitem label="Common pages">
-    <menu>
-      <menuitem label="Common page 1">
-        <action>CommonPage</action>
-      </menuitem>
-      <menuitem label="Common page 2">
-        <action>CommonPage</action>
-      </menuitem>
-      <menuitem label="Common page 3">
-        <action>CommonPage</action>
-      </menuitem>
-    </menu>
-  </menuitem>
   <menuitem label="Logout">
     <action>LoginForm#method=onLogout#static=1</action>
     <icon>fas:sign-out-alt fa-fw</icon>
