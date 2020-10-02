@@ -434,24 +434,23 @@ class ClienteJuridicoForm extends TPage
         if ($pessoaJuridica) {
           $action = new TAction(['ClienteJuridicoForm', 'onEdit'], ['key' => $pessoaJuridica->cliente->id]);
           new TMessage('info', 'Cliente já cadastrado', $action);
+          return;
         }
 
         $cnpj = preg_replace('/[^0-9]/', '', $param['cnpj']);
         $url =  "https://www.receitaws.com.br/v1/cnpj/" . $cnpj;
 
         $content = @file_get_contents($url);
+        $cnpj_data = json_decode($content);
 
-        if ($content !== false) {
-          $cnpj_data = json_decode($content);
+
+        if (is_object($cnpj_data) && $cnpj_data->status !== 'ERROR') {
           $data = new stdClass;
+          $data->nome  = $cnpj_data->nome;
+          $data->email = $cnpj_data->email;
+          $data->cep   = $cnpj_data->cep;
 
-          if (is_object($cnpj_data) && $cnpj_data->status !== 'ERRO') {
-            $data->nome  = $cnpj_data->nome;
-            $data->email = $cnpj_data->email;
-            $data->cep   = $cnpj_data->cep;
-
-            TForm::sendData('form_Cliente', $data, false, true);
-          }
+          TForm::sendData('form_Cliente', $data, false, true);
         }
       }
     } catch (Exception $e) {
