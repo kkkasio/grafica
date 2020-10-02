@@ -76,7 +76,7 @@ class CategoriaForm extends TPage
     // vertical box container
     $container = new TVBox;
     $container->style = 'width: 100%';
-    $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
+    //$container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
     $container->add($this->form);
 
     parent::add($container);
