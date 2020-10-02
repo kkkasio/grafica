@@ -86,8 +86,8 @@ class VendasList extends TPage
 		$column_id = new TDataGridColumn('id', '#', 'right');
 		$column_numero = new TDataGridColumn('numero', 'Número', 'left');
 		$column_created_at = new TDataGridColumn('created_at', 'Data', 'left');
-		$column_cliente_id = new TDataGridColumn('cliente_id', 'Cliente', 'left');
-		$column_vendedor_id = new TDataGridColumn('vendedor_id', 'Vendedor', 'right');
+		$column_cliente_id = new TDataGridColumn('cliente->nome', 'Cliente', 'left');
+		$column_vendedor_id = new TDataGridColumn('vendedor->name', 'Vendedor', 'right');
 		$column_valor_real = new TDataGridColumn('valor_real', 'Valor', 'left');
 		$column_desconto = new TDataGridColumn('desconto', 'Desconto', 'right');
 		$column_forma_pagamento = new TDataGridColumn('forma_pagamento', 'Forma Pagamento', 'left');
