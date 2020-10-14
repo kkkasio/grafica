@@ -32,52 +32,55 @@ class VendaForm extends TPage
     $this->form->setFormTitle('Nova Venda');
     $this->form->setClientValidation(true);
 
-    $id          = new THidden('id');
-    $data        = new TDate('data');
-    $cliente_id = new TDBUniqueSearch('cliente_id', 'grafica', 'Cliente', 'id', 'nome');
+    $id              = new THidden('id');
+    $data            = new TDate('data');
+    $cliente_id      = new TDBUniqueSearch('cliente_id', 'grafica', 'Cliente', 'id', 'nome');
     $forma_pagamento = new TCombo('forma_pagamento');
+
 
     $formas_pagamento = ['Dinheiro', 'Crédito', 'Débito', 'Boleto'];
     $forma_pagamento->addItems($formas_pagamento);
 
     $produto_detail_unqid          = new THidden('produto_detail_uniqid');
-    $produto_detail_id              = new THidden('produto_detail_id');
+    $produto_detail_id             = new THidden('produto_detail_id');
     $produto_detail_produto_id     = new TDBUniqueSearch('produto_detail_produto_id', 'grafica', 'Produto', 'id', 'nome');
     $produto_detail_preco          = new TEntry('produto_detail_preco');
-
-    $produto_detail_preco->setEditable(false);
-
-    $produto_detail_quantidade     = new TEntry('produto_detail_quantidade');
-    $porcentagem_desconto       = new TEntry('porcentagem_desconto');
-    $produto_detail_total         = new TEntry('produto_detail_total');
-
-    $pagamento_detail_uniqid = new THidden('pagamento_detail_uniqid');
-    $pagamento_detail_id = new THidden('pagamento_detail_id');
-    $pagamento_detail_valor = new TNumeric('pagamento_detail_valor', 2, ',', '.', true);
+    $produto_detail_largura        = new TNumeric('produto_detail_largura', 2, ',', '.', true);
+    $produto_detail_altura         = new TNumeric('produto_detail_altura', 2, ',', '.', true);
+    $produto_detail_quantidade  = new TEntry('produto_detail_quantidade');
+    $produto_detail_total       = new TEntry('produto_detail_total');
 
 
+    $pagamento_detail_uniqid  = new THidden('pagamento_detail_uniqid');
+    $pagamento_detail_id      = new THidden('pagamento_detail_id');
+    $pagamento_detail_valor   = new TNumeric('pagamento_detail_valor', 2, ',', '.', true);
     $pagamento_detail_data = new TDate('pagamento_detail_data');
     $pagamento_detail_pago = new TCombo('pagamento_detail_pago');
 
     $pagamento_detail_data->setMask('dd/mm/yyyy');
     $pagamento_detail_data->setDatabaseMask('yyyy-mm-dd');
     $pagamento_detail_data->setSize('100%');
-
     $pagamento_detail_pago->addItems(['S' => 'Sim', 'N' => 'Não']);
 
     $id->setEditable(false);
     $cliente_id->setSize('100%');
     $cliente_id->setMinLength(1);
 
+    $produto_detail_preco->setEditable(false);
+    $produto_detail_quantidade->setMask('9!');
+
     $data->setSize('100%');
     $data->setMask('dd/mm/yyyy');
     $data->setDatabaseMask('yyyy-mm-dd');
+    $data->setValue(date('d/m/yyyy'));
 
     $forma_pagamento->setSize('100%');
     $produto_detail_produto_id->setSize('100%');
     $produto_detail_produto_id->setMinLength(1);
     $produto_detail_preco->setSize('100%');
     $produto_detail_quantidade->setSize('100%');
+    $produto_detail_altura->setEditable(false);
+    $produto_detail_largura->setEditable(false);
 
     $data->addValidation('Data', new TRequiredValidator);
     $cliente_id->addValidation('Cliente', new TRequiredValidator);
@@ -109,8 +112,15 @@ class VendaForm extends TPage
     $this->form->addFields(
       [new TLabel('Preço (*)', '#FF0000')],
       [$produto_detail_preco],
-      [new Tlabel('Desconto (%)', '#FF0000')],
-      [$porcentagem_desconto]
+      [new TLabel('')],
+      []
+    );
+
+    $this->form->addFields(
+      [new TLabel('Largura (M)', '#FF0000')],
+      [$produto_detail_largura],
+      [new Tlabel('Altura (M)', '#FF0000')],
+      [$produto_detail_altura]
     );
 
     $btnNewProduct = new TActionLink('', new TAction(['ProdutosVendaForm', 'onEdit']), 'green', null, null, 'fa:plus-circle');
@@ -126,27 +136,32 @@ class VendaForm extends TPage
 
 
     $this->produto_lista = new BootstrapDatagridWrapper(new TDataGrid);
-    $this->produto_lista->setHeight(150);
+    $this->produto_lista->setHeight(250);
     $this->produto_lista->makeScrollable();
     $this->produto_lista->setId('produtos_lista');
     $this->produto_lista->generateHiddenFields();
     $this->produto_lista->style = "min-width: 700px; width:100%;margin-bottom: 10px";
 
-    $col_uniq      = new TDataGridColumn('uniqid', 'Uniqid', 'center', '4%');
-    $col_id        = new TDataGridColumn('id', 'ID', 'center', '10%');
-    $col_pid       = new TDataGridColumn('produto_id', '#', 'center', '15%');
-    $col_nome       = new TDataGridColumn('produto_id', 'Produto', 'left', '35%');
+    $col_uniq       = new TDataGridColumn('uniqid', 'Uniqid', 'center', '10%');
+    $col_id         = new TDataGridColumn('id', 'ID', 'center', '10%');
+    $col_pid        = new TDataGridColumn('produto_id', '#', 'center', '10%');
+    $col_nome       = new TDataGridColumn('produto_id', 'Produto', 'left', '30%');
+    $col_altura     = new TDataGridColumn('altura', 'Altura(M)', 'left', '10%');
+    $col_largura    = new TDataGridColumn('largura', 'Largura(M)', 'left', '10%');
+    $col_area       = new TDataGridColumn('area', 'M²', 'left', '10%');
     $col_quantidade = new TDataGridColumn('quantidade', 'Quantidade', 'left', '15%');
-    $col_preco     = new TDataGridColumn('preco_venda', 'Preço', 'right', '15%');
-    //$col_disc   = new TDataGridColumn('discount', 'Discount', 'right', '15%');
-    $col_subt      = new TDataGridColumn('={quantidade} * ( {preco_venda} ) ', 'Subtotal', 'right', '20%');
+    $col_preco      = new TDataGridColumn('preco_venda', 'Preço', 'left', '15%');
+    $col_subt       = new TDataGridColumn('sub_total', 'Subtotal', 'left', '15%');
 
-    $this->produto_lista->addColumn($col_uniq);
-    $this->produto_lista->addColumn($col_id);
-    $this->produto_lista->addColumn($col_pid);
+    //$this->produto_lista->addColumn($col_uniq);
+    //$this->produto_lista->addColumn($col_id);
+    //$this->produto_lista->addColumn($col_pid);
     $this->produto_lista->addColumn($col_nome);
-    $this->produto_lista->addColumn($col_quantidade);
+    $this->produto_lista->addColumn($col_altura);
+    $this->produto_lista->addColumn($col_largura);
+    $this->produto_lista->addColumn($col_area);
     $this->produto_lista->addColumn($col_preco);
+    $this->produto_lista->addColumn($col_quantidade);
     $this->produto_lista->addColumn($col_subt);
 
 
@@ -157,7 +172,6 @@ class VendaForm extends TPage
     $col_subt->enableTotal('sum', 'R$', 2, ',', '.');
 
     $col_subt->setTotalFunction(function ($values) {
-
       return array_sum((array) $values + 500);
     });
 
@@ -182,14 +196,22 @@ class VendaForm extends TPage
     $this->form->addContent([$panel]);
 
     $format_value = function ($value) {
-      if (is_numeric($value)) {
+      if (is_numeric($value))
         return 'R$ ' . number_format($value, 2, ',', '.');
-      }
-      return $value;
     };
 
+    $format_value_2 = function ($value) {
+      if (is_numeric($value))
+        return $value;
+      return '-';
+    };
+
+    $col_altura->setTransformer($format_value_2);
+    $col_largura->setTransformer($format_value_2);
+    $col_area->setTransformer($format_value_2);
     $col_preco->setTransformer($format_value);
     $col_subt->setTransformer($format_value);
+
 
 
     $this->form->addContent(['<h4>Adicionar Pagamentos</h4><hr>']);
@@ -225,6 +247,7 @@ class VendaForm extends TPage
     $col_pagamento_data->setTransformer(function ($value) {
       return TDate::date2br($value);
     });
+
     $col_pagamento_pago->setTransformer(function ($value) {
       if ($value == 'S') {
         $div = new TElement('span');
@@ -266,7 +289,7 @@ class VendaForm extends TPage
     // create the page container
     $container = new TVBox;
     $container->style = 'width: 100%';
-    //$container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
+    $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
     $container->add($this->form);
     parent::add($container);
   }
@@ -275,35 +298,56 @@ class VendaForm extends TPage
   {
     try {
       $this->form->validate();
+      $data = new stdClass;
       $data = $this->form->getData();
+
 
       if ((!$data->produto_detail_produto_id) || (!$data->produto_detail_quantidade) || (!$data->produto_detail_preco)) {
         throw new Exception('Os Campos Produto, Quantidade e Preço são obrigatórios');
       }
 
-
       // verificar se o produto já está na lista
-
       $uniqid = !empty($data->produto_detail_uniqid) ? $data->produto_detail_uniqid : uniqid();
+
+      if (!empty($param["produtos_lista_produto_id"])) {
+        //colocar o total da venda na sessão
+        $total = TSession::getValue('totalVenda');
+
+        if (!empty($data->produto_detail_largura) && !empty($data->produto_detail_altura)) {
+          $data->produto_detail_area = $data->produto_detail_largura * $data->produto_detail_altura;
+          $data->produto_detail_sub_total = $data->produto_detail_area * $data->produto_detail_preco;
+
+          $total += ($data->produto_detail_area * $data->produto_detail_preco) * $data->produto_detail_quantidade;
+        } else {
+          $total += $data->produto_detail_quantidade * $data->produto_detail_preco;
+          $data->produto_detail_sub_total =  $data->produto_detail_quantidade * $data->produto_detail_preco;
+        }
+
+        TSession::setValue('totalVenda', $total);
+      } else {
+        if (!empty($data->produto_detail_largura) && !empty($data->produto_detail_altura)) {
+          $data->produto_detail_area = $data->produto_detail_largura * $data->produto_detail_altura;
+
+          $total = $data->produto_detail_area * $data->produto_detail_preco;
+          $data->produto_detail_sub_total = $total;
+        } else {
+          $total = $data->produto_detail_preco *  $data->produto_detail_quantidade;
+          $data->produto_detail_sub_total = $total;
+        }
+        TSession::setValue('totalVenda', $total);
+      }
 
       $grid_data = [
         'uniqid'      => $uniqid,
         'id'          => $data->produto_detail_id,
         'produto_id'  => $data->produto_detail_produto_id,
+        'altura'      => $data->produto_detail_altura,
+        'largura'     => $data->produto_detail_largura,
+        'area'        => $data->produto_detail_area,
         'quantidade'  => $data->produto_detail_quantidade,
         'preco_venda' => $data->produto_detail_preco,
+        'sub_total'   => $data->produto_detail_sub_total,
       ];
-
-      //colocar o total da venda na sessão
-      if (!empty($param["produtos_lista_produto_id"])) {
-        $total = TSession::getValue('totalVenda');
-        $total += $data->produto_detail_quantidade * $data->produto_detail_preco;
-
-        TSession::setValue('totalVenda', $total);
-      } else {
-        $total = $data->produto_detail_preco *  $data->produto_detail_quantidade;
-        TSession::setValue('totalVenda', $total);
-      }
 
       // insert row dynamically
       $row = $this->produto_lista->addItem((object) $grid_data);
@@ -315,11 +359,12 @@ class VendaForm extends TPage
       $data->produto_detail_uniqid         = '';
       $data->produto_detail_id             = '';
       $data->produto_detail_nome           = '';
+      $data->produto_detail_altura         = '';
+      $data->produto_detail_largura        = '';
+      $data->produto_detail_area           = '';
       $data->produto_detail_quantidade     = '';
       $data->produto_detail_preco          = '';
       $data->produto_detail_produto_id     = '';
-
-
 
 
       // send data, do not fire change/exit events
@@ -352,6 +397,13 @@ class VendaForm extends TPage
       try {
         TTransaction::open('grafica');
         $produto   = new Produto($params['produto_detail_produto_id']);
+        if ($produto->unidade->nome === 'Metro Quadrado') {
+          TEntry::enableField('form_Venda', 'produto_detail_altura');
+          TEntry::enableField('form_Venda', 'produto_detail_largura');
+        } else {
+          TEntry::disableField('form_Venda', 'produto_detail_altura');
+          TEntry::disableField('form_Venda', 'produto_detail_largura');
+        }
 
         TForm::sendData('form_Venda', (object) ['produto_detail_preco' => $produto->valor_venda]);
         TTransaction::close();
@@ -425,6 +477,7 @@ class VendaForm extends TPage
 
   public function onSave($param)
   {
+
     try {
       TTransaction::open('grafica');
 
@@ -433,12 +486,12 @@ class VendaForm extends TPage
 
       $venda = new Venda;
       $venda->fromArray((array) $data);
-      $venda->numero = uniqid('DZ7');
+      $venda->numero = date('YmdHis');
       $venda->cliente_id = $data->cliente_id;
       $venda->vendedor_id = $_SESSION["erpmeuovoduro"]['userid'];
       $venda->desconto = 0;
       $venda->forma_pagamento = $data->forma_pagamento;
-      $venda->status = 'F';
+      $venda->status = 'Finalizada';
       $venda->store();
 
       VendaItem::where('venda_id', '=', $venda->id)->delete();
@@ -446,11 +499,24 @@ class VendaForm extends TPage
       $total = 0;
       if (!empty($param["produtos_lista_produto_id"])) {
         foreach ($param["produtos_lista_produto_id"] as $key => $item_id) {
+
           $item = new VendaItem;
+
           $item->produto_id  = $item_id;
           $item->quantidade  = (float) $param["produtos_lista_quantidade"][$key];
-          $item->preco     = (float) $param["produtos_lista_preco_venda"][$key];
-          $item->total       = ($item->preco * $item->quantidade);
+          $item->preco       = (float) $param["produtos_lista_preco_venda"][$key];
+
+          if ($param["produtos_lista_area"][$key] !== '' && $param["produtos_lista_altura"][$key] !== '' && $param["produtos_lista_largura"][$key] !== '') {
+            $item->altura  = $param["produtos_lista_altura"][$key];
+            $item->largura = $param["produtos_lista_largura"][$key];
+            $item->area    = $param["produtos_lista_area"][$key];
+            $item->total   = ($item->area * $item->preco) * $item->quantidade;
+          } else {
+            $item->altura  = null;
+            $item->largura = null;
+            $item->area    = null;
+            $item->total   = ($item->preco * $item->quantidade);
+          }
 
           $item->venda_id = $venda->id;
           $item->store();
@@ -466,8 +532,7 @@ class VendaForm extends TPage
 
       TTransaction::close(); // close the transaction
       new TMessage('info', TAdiantiCoreTranslator::translate('Record saved'));
-    } catch (Exception $e) // in case of exception
-    {
+    } catch (Exception $e) {
       new TMessage('error', $e->getMessage());
       $this->form->setData($this->form->getData()); // keep form data
       TTransaction::rollback();
@@ -480,6 +545,7 @@ class VendaForm extends TPage
     $data->cliente_id   = $param['cliente_id'];
     $this->form->setData($data);
   }
+
   function onClear($param)
   {
     $this->form->clear();
