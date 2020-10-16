@@ -90,8 +90,10 @@ class VendasList extends TPage
     $column_numero = new TDataGridColumn('numero', 'Número', 'left');
     $column_created_at = new TDataGridColumn('created_at', 'Data', 'left');
     $column_cliente_id = new TDataGridColumn('cliente->nome', 'Cliente', 'left');
-    $column_vendedor_id = new TDataGridColumn('vendedor->name', 'Vendedor', 'right');
-    $column_valor_real = new TDataGridColumn('valor_real', 'Valor', 'left');
+    $column_vendedor_id = new TDataGridColumn('vendedor->name', 'Vendedor', 'left');
+    $column_valor_real = new TDataGridColumn('valor_real', 'Valor Total', 'left');
+    $column_total_pago = new TDataGridColumn('totalPago', 'Total Pago', 'right');
+    $column_falta_pagar = new TDataGridColumn('={valor_real} - {totalPago}', 'Restante', 'left');
     $column_desconto = new TDataGridColumn('desconto', 'Desconto', 'right');
     $column_forma_pagamento = new TDataGridColumn('forma_pagamento', 'Forma Pagamento', 'left');
     $column_status = new TDataGridColumn('status', 'Status', 'left');
@@ -104,6 +106,8 @@ class VendasList extends TPage
     $this->datagrid->addColumn($column_cliente_id);
     $this->datagrid->addColumn($column_vendedor_id);
     $this->datagrid->addColumn($column_valor_real);
+    $this->datagrid->addColumn($column_total_pago);
+    $this->datagrid->addColumn($column_falta_pagar);
     $this->datagrid->addColumn($column_desconto);
     $this->datagrid->addColumn($column_forma_pagamento);
     $this->datagrid->addColumn($column_status);
@@ -121,6 +125,20 @@ class VendasList extends TPage
       return $value . '%';
     });
 
+    $column_total_pago->setTransformer(function ($value) {
+      var_dump($value);
+      if (is_numeric($value)) {
+        return 'R$ ' . number_format($value, 2, ',', '.');
+      }
+      return 'R$ 0';
+    });
+    $column_falta_pagar->setTransformer(function ($value) {
+      var_dump($value);
+      if (is_numeric($value)) {
+        return 'R$ ' . number_format($value, 2, ',', '.');
+      }
+      return 'R$ 0';
+    });
 
 
     // creates the datagrid column actions
