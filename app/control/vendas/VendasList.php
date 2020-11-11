@@ -126,14 +126,12 @@ class VendasList extends TPage
     });
 
     $column_total_pago->setTransformer(function ($value) {
-      var_dump($value);
       if (is_numeric($value)) {
         return 'R$ ' . number_format($value, 2, ',', '.');
       }
       return 'R$ 0';
     });
     $column_falta_pagar->setTransformer(function ($value) {
-      var_dump($value);
       if (is_numeric($value)) {
         return 'R$ ' . number_format($value, 2, ',', '.');
       }
@@ -145,11 +143,9 @@ class VendasList extends TPage
     $column_cliente_id->setAction(new TAction([$this, 'onReload']), ['order' => 'cliente_id']);
 
 
-    /*$action1 = new TDataGridAction(['VendaForm', 'onEdit'], ['id' => '{id}']);
-		$action2 = new TDataGridAction([$this, 'onDelete'], ['id' => '{id}']);
+    $action1 = new TDataGridAction(['VendaView', 'onReload'], ['id' => '{id}']);
+    $this->datagrid->addAction($action1, 'Visualizar Venda',   'fa:search green');
 
-		$this->datagrid->addAction($action1, _t('Edit'),   'far:edit blue');
-		$this->datagrid->addAction($action2, _t('Delete'), 'far:trash-alt red');*/
 
     // create the datagrid model
     $this->datagrid->createModel();

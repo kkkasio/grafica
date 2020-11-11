@@ -10,10 +10,12 @@ class VendaItem extends TRecord
 {
   const TABLENAME  = 'venda_item';
   const PRIMARYKEY = 'id';
-  const IDPOLICY   =  'max'; // {max, serial}
+  const IDPOLICY   = 'max'; // {max, serial}
   const CREATEDAT  = 'created_at';
   const UPDATEDAT  = 'updated_at';
 
+
+  private $produto;
 
   /**
    * Constructor method
@@ -31,5 +33,31 @@ class VendaItem extends TRecord
     parent::addAttribute('total');
     parent::addAttribute('created_at');
     parent::addAttribute('updated_at');
+  }
+
+  /**
+   * Method set_produto
+   * Sample of usage: $venda_item->produto = $object;
+   * @param $object Instance of Produto
+   */
+  public function set_produto(Produto $object)
+  {
+    $this->produto = $object;
+    $this->produto_id = $object->id;
+  }
+
+  /**
+   * Method get_produto
+   * Sample of usage: $venda_item->produto->attribute;
+   * @returns Produto instance
+   */
+  public function get_produto()
+  {
+    // loads the associated object
+    if (empty($this->produto))
+      $this->produto = new Produto($this->produto_id);
+
+    // returns the associated object
+    return $this->produto;
   }
 }

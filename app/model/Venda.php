@@ -88,6 +88,10 @@ class Venda extends TRecord
     return $this->vendedor;
   }
 
+  public function get_produtos()
+  {
+    return VendaItem::where('venda_id', '=', $this->id)->load();
+  }
 
   public function get_totalPago()
   {
@@ -96,5 +100,10 @@ class Venda extends TRecord
   public function get_faltaPagar()
   {
     return Pagamentos::where('venda_id', '=', $this->id)->where('pago', '=', 'N')->sumBy('valor');
+  }
+
+  public function get_pagamentos()
+  {
+    return Pagamentos::where('venda_id', '=', $this->id)->load();
   }
 }

@@ -21,6 +21,9 @@ class Cliente extends TRecord
 
   private $telefones;
   private $cliente;
+
+  private $estado;
+  private $cidade;
   /**
    * Constructor method
    */
@@ -39,6 +42,27 @@ class Cliente extends TRecord
     parent::addAttribute('cidade_id');
     parent::addAttribute('created_at');
     parent::addAttribute('updated_at');
+  }
+
+
+  public function get_estado()
+  {
+    // loads the associated object
+    if (empty($this->estado))
+      $this->estado = new Estado($this->estado_id);
+
+    // returns the associated object
+    return $this->estado;
+  }
+
+  public function get_cidade()
+  {
+    // loads the associated object
+    if (empty($this->cidade))
+      $this->cidade = new Cidade($this->cidade_id);
+
+    // returns the associated object
+    return $this->cidade;
   }
 
   public function clearParts()
@@ -106,15 +130,6 @@ class Cliente extends TRecord
 
   public function getVendas()
   {
-    /* $criteria = new TCriteria;
-    $criteria->add(new TFilter('cliente_id', '=', $this->id));
-
-    $repository = new TRepository('Venda');
-
-    $vendas = $repository->load($criteria);
-
-    return $vendas;*/
-
     return Venda::where('cliente_id', '=', $this->id)->load();
   }
 }
