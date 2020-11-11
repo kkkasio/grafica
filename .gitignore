@@ -1,4 +1,5 @@
 .env
 app/database/log.db
+app/database/**.db
 app/config/online/*
 app/config/offline/*

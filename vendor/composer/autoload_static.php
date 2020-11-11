@@ -7,9 +7,15 @@ namespace Composer\Autoload;
 class ComposerStaticInit9ca02ded2ffb55c884817c3c88c86343
 {
     public static $prefixLengthsPsr4 = array (
+        'Z' => 
+        array (
+            'Zend\\Escaper\\' => 13,
+        ),
         'P' => 
         array (
             'Picqer\\Barcode\\' => 15,
+            'PhpOffice\\PhpWord\\' => 18,
+            'PhpOffice\\Common\\' => 17,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
         'L' => 
@@ -28,9 +34,21 @@ class ComposerStaticInit9ca02ded2ffb55c884817c3c88c86343
     );
 
     public static $prefixDirsPsr4 = array (
+        'Zend\\Escaper\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/zendframework/zend-escaper/src',
+        ),
         'Picqer\\Barcode\\' => 
         array (
             0 => __DIR__ . '/..' . '/picqer/php-barcode-generator/src',
+        ),
+        'PhpOffice\\PhpWord\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/phpword/src/PhpWord',
+        ),
+        'PhpOffice\\Common\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/common/src/Common',
         ),
         'PHPMailer\\PHPMailer\\' => 
         array (
@@ -100,6 +118,7 @@ class ComposerStaticInit9ca02ded2ffb55c884817c3c88c86343
         'HTML5_Parser' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Parser.php',
         'HTML5_Tokenizer' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Tokenizer.php',
         'HTML5_TreeBuilder' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/TreeBuilder.php',
+        'PclZip' => __DIR__ . '/..' . '/pclzip/pclzip/pclzip.lib.php',
         'pQuery' => __DIR__ . '/..' . '/tburry/pquery/pQuery.php',
         'pQuery\\AspEmbeddedNode' => __DIR__ . '/..' . '/tburry/pquery/gan_node_html.php',
         'pQuery\\CSSQueryTokenizer' => __DIR__ . '/..' . '/tburry/pquery/gan_selector_html.php',
