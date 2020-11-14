@@ -8,6 +8,7 @@ use Adianti\Widget\Dialog\TMessage;
 use Adianti\Widget\Form\TDate;
 use Adianti\Widget\Form\TEntry;
 use Adianti\Widget\Form\TLabel;
+use Adianti\Widget\Util\THyperLink;
 use Adianti\Widget\Util\TTextDisplay;
 use Adianti\Widget\Util\TTreeView;
 use Adianti\Wrapper\BootstrapFormBuilder;
@@ -62,26 +63,54 @@ class VendaView extends TPage
       $this->datagridProdutos->style = 'width: 100%';
       $this->datagridProdutos->datatable = 'true';
 
+      $this->datagridProdutos->disableDefaultClick();
+
+      $column_produto_id    = new TDataGridColumn('id_produto_venda', '#', 'left');
       $column_produto    = new TDataGridColumn('produto->nome', 'Produto', 'left');
-      $column_quantidade = new TDataGridColumn('quantidade', 'Quantidade', 'right');
+      $column_quantidade = new TDataGridColumn('quantidade', 'Quantidade', 'left');
       $column_total      = new TDataGridColumn('total', 'Valor Total', 'left');
+      $column_arte       = new TDataGridColumn('arte', 'Arte', 'center');
+
+      $actionArte = new TDataGridAction(['UploadArte', 'onReload'], ['id_produto_venda' => '{id_produto_venda}']);
+      $this->datagridProdutos->addAction($actionArte, 'Enviar Arte',   'fa:upload green');
 
 
       $this->form->addFields([new TLabel('ID: ')], [new TTextDisplay($venda->numero)], [new TLabel('Status: ')], [new TTextDisplay($venda->status)], [new TLabel('Vendedor')], [new TTextDisplay($venda->vendedor->name)]);
       $this->form->addFields([new TLabel('Total da Venda: ')], [new TTextDisplay('R$ ' . number_format($venda->valor_real, 2, ',', '.'))], [new TLabel('Forma Pagamento')], [new TTextDisplay($venda->forma_pagamento)]);
 
 
+      $this->datagridProdutos->addColumn($column_produto_id)->setVisibility(false);
       $this->datagridProdutos->addColumn($column_produto);
       $this->datagridProdutos->addColumn($column_quantidade);
       $this->datagridProdutos->addColumn($column_total);
+      $this->datagridProdutos->addColumn($column_arte);
+
+
+      $column_arte->setTransformer(function ($value) {
+        if ($value) {
+          $b = new THyperLink('VER ARTE', 'download.php?file=' . $value, '#212529', 20, 'b', '', 'fas:external-link-alt white');
+          $b->style = 'margin-top:0px';
+          return  $b;
+        }
+        return 'SEM ARTE';
+      });
+
+
+
 
       $this->datagridProdutos->createModel();
 
       $this->form->addContent([$this->datagridProdutos]);
 
 
-      foreach ($venda->produtos as $item) {
+      foreach ($venda->produtos as $produto) {
+
+        $item = new stdClass;
+        $item = $produto;
+        $item->id_produto_venda = $produto->id;
+        unset($item->id);
         $this->datagridProdutos->addItem($item);
+        unset($item);
       }
 
       $this->form->appendPage('Pagamentos');
@@ -124,7 +153,6 @@ class VendaView extends TPage
       $container = new TVBox;
       $container->style = 'width: 100%';
       // $container->add(new TXMLBreadCrumb('menu.xml', __CLASS__));
-
       $container->add($this->form);
 
       parent::add($container);
@@ -135,8 +163,10 @@ class VendaView extends TPage
     }
   }
 
-  public function onReload()
+  public function onReload($param = null)
   {
+    if (isset($param['tab']))
+      $this->form->setCurrentPage($param['tab']);
   }
 
   static public function onConfirmPagamento($param)
@@ -157,11 +187,21 @@ class VendaView extends TPage
       TTransaction::open('grafica');
       $pagamento = new Pagamentos($param['id_pagamento']);
       $pagamento->pago = 'S';
-      $pagamento->store();
+      //$pagamento->store();
+
+
+      $action = new TAction([__CLASS__, 'onReload'], ['id' => $param['id'], 'tab' => '2']);
+
+      new TMessage('info', 'Pagamento atualizado com sucesso!', $action);
     } catch (Exception $e) {
       new TMessage('error', $e->getMessage());
     } finally {
       TTransaction::close();
     }
+  }
+
+  public function onEnviarArte($param)
+  {
+    var_dump($param);
   }
 }

@@ -31,6 +31,7 @@ class VendaItem extends TRecord
     parent::addAttribute('quantidade');
     parent::addAttribute('preco');
     parent::addAttribute('total');
+    parent::addAttribute('arte');
     parent::addAttribute('created_at');
     parent::addAttribute('updated_at');
   }
