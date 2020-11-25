@@ -50,6 +50,9 @@ class ClienteJuridicoForm extends TPage
     $this->form->setClientValidation(true);
     $this->form->generateAria();
 
+    $this->form->appendPage('Dados do Cliente');
+
+
 
     // create the form fields
     $id = new THidden('id');
@@ -173,6 +176,46 @@ class ClienteJuridicoForm extends TPage
     $panel->add($this->detail_list);
     $panel->getBody()->style = 'overflow-x:auto';
     $this->form->addContent([$panel]);
+
+    $this->form->appendPage('Vendas do Cliente');
+
+    $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);
+    $this->datagrid->style = 'width: 100%';
+    $this->datagrid->datatable = 'true';
+
+
+    $column_id = new TDataGridColumn('id', '#', 'right');
+    $column_numero = new TDataGridColumn('numero', 'Número', 'left');
+    $column_created_at = new TDataGridColumn('created_at', 'Data', 'left');
+    $column_vendedor_id = new TDataGridColumn('vendedor->name', 'Vendedor', 'left');
+    $column_valor_real = new TDataGridColumn('valor_real', 'Valor Real', 'left');
+    $column_forma_pagamento = new TDataGridColumn('forma_pagamento', 'Forma Pagamento', 'left');
+    $column_status = new TDataGridColumn('status', 'Status', 'left');
+
+
+    $this->datagrid->addColumn($column_id);
+    $this->datagrid->addColumn($column_numero);
+    $this->datagrid->addColumn($column_vendedor_id);
+    $this->datagrid->addColumn($column_valor_real);
+    $this->datagrid->addColumn($column_forma_pagamento);
+    $this->datagrid->addColumn($column_status);
+    $this->datagrid->addColumn($column_created_at);
+
+
+    $column_valor_real->setTransformer(function ($value) {
+      if (is_numeric($value))
+        return 'R$ ' . number_format($value, 2, ',', '.');
+    });
+
+    $column_created_at->setTransformer(function ($value) {
+      return TDate::date2br($value);
+    });
+
+    $this->datagrid->createModel();
+
+    $this->form->addContent([$this->datagrid]);
+
+
 
     // create the form actions
     $btn = $this->form->addAction(_t('Save'), new TAction([$this, 'onSave']), 'fa:save green');
