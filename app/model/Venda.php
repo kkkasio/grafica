@@ -36,6 +36,7 @@ class Venda extends TRecord
     parent::addAttribute('desconto');
     parent::addAttribute('forma_pagamento');
     parent::addAttribute('status');
+    parent::addAttribute('previsao_entrega');
     parent::addAttribute('created_at');
     parent::addAttribute('updated_at');
   }

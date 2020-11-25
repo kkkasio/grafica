@@ -34,6 +34,7 @@ class VendaForm extends TPage
 
     $id              = new THidden('id');
     $data            = new TDate('data');
+    $previsao        = new TDate('previsao_entrega');
     $cliente_id      = new TDBUniqueSearch('cliente_id', 'grafica', 'Cliente', 'id', 'nome');
     $forma_pagamento = new TCombo('forma_pagamento');
 
@@ -74,6 +75,11 @@ class VendaForm extends TPage
     $data->setDatabaseMask('yyyy-mm-dd');
     $data->setValue(date('d/m/yyyy'));
 
+
+    $previsao->setSize('100%');
+    $previsao->setMask('dd/mm/yyyy');
+    $previsao->setDatabaseMask('yyyy-mm-dd');
+
     $forma_pagamento->setSize('100%');
     $produto_detail_produto_id->setSize('100%');
     $produto_detail_produto_id->setMinLength(1);
@@ -83,6 +89,7 @@ class VendaForm extends TPage
     $produto_detail_largura->setEditable(false);
 
     $data->addValidation('Data', new TRequiredValidator);
+    $previsao->addValidation('Previsão Entrega', new TRequiredValidator);
     $cliente_id->addValidation('Cliente', new TRequiredValidator);
     $forma_pagamento->addValidation('Forma de Pagamento', new TRequiredValidator);
 
@@ -93,9 +100,11 @@ class VendaForm extends TPage
     $this->form->addFields(
       [new TLabel('Data (*)', '#FF0000')],
       [$data],
-      [],
-      [$id]
+      [new TLabel('Previsão de Entrega (*)', '#ff0000')],
+      [$previsao]
     );
+
+    $this->form->addFields([$id]);
 
     $this->form->addFields([new TLabel('Cliente (*)', '#FF0000')], [$cliente_id], [new TLabel('Forma de Pagamento', '#FF0000')], [$forma_pagamento]);
 

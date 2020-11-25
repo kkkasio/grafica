@@ -2,16 +2,19 @@
 
 use Adianti\Control\TAction;
 use Adianti\Control\TPage;
+use Adianti\Database\TTransaction;
 use Adianti\Widget\Container\TPanelGroup;
 use Adianti\Widget\Datagrid\TDataGrid;
 use Adianti\Widget\Datagrid\TDataGridColumn;
 use Adianti\Widget\Datagrid\TPageNavigation;
+use Adianti\Widget\Dialog\TMessage;
 use Adianti\Widget\Form\TCombo;
 use Adianti\Widget\Form\TDate;
 use Adianti\Widget\Form\TEntry;
 use Adianti\Widget\Wrapper\TDBUniqueSearch;
 use Adianti\Wrapper\BootstrapDatagridWrapper;
 use Adianti\Wrapper\BootstrapFormBuilder;
+use PhpOffice\PhpWord\TemplateProcessor;
 
 /**
  * VendaList Listing
@@ -86,23 +89,25 @@ class VendasList extends TPage
 
 
     // creates the datagrid columns
-    $column_id = new TDataGridColumn('id', '#', 'right');
-    $column_numero = new TDataGridColumn('numero', 'Número', 'left');
-    $column_created_at = new TDataGridColumn('created_at', 'Data', 'left');
-    $column_cliente_id = new TDataGridColumn('cliente->nome', 'Cliente', 'left');
-    $column_vendedor_id = new TDataGridColumn('vendedor->name', 'Vendedor', 'left');
-    $column_valor_real = new TDataGridColumn('valor_real', 'Valor Total', 'left');
-    $column_total_pago = new TDataGridColumn('totalPago', 'Total Pago', 'right');
-    $column_falta_pagar = new TDataGridColumn('={valor_real} - {totalPago}', 'Restante', 'left');
-    $column_desconto = new TDataGridColumn('desconto', 'Desconto', 'right');
-    $column_forma_pagamento = new TDataGridColumn('forma_pagamento', 'Forma Pagamento', 'left');
-    $column_status = new TDataGridColumn('status', 'Status', 'left');
+    $column_id               = new TDataGridColumn('id', '#', 'right');
+    $column_numero           = new TDataGridColumn('numero', 'Número', 'left');
+    $column_created_at       = new TDataGridColumn('created_at', 'Data', 'left');
+    $column_previsao_entrega = new TDataGridColumn('previsao_entrega', 'Previsão Entrega', 'left');
+    $column_cliente_id       = new TDataGridColumn('cliente->nome', 'Cliente', 'left');
+    $column_vendedor_id      = new TDataGridColumn('vendedor->name', 'Vendedor', 'left');
+    $column_valor_real       = new TDataGridColumn('valor_real', 'Valor Total', 'left');
+    $column_total_pago       = new TDataGridColumn('totalPago', 'Total Pago', 'right');
+    $column_falta_pagar      = new TDataGridColumn('={valor_real} - {totalPago}', 'Restante', 'left');
+    $column_desconto         = new TDataGridColumn('desconto', 'Desconto', 'right');
+    $column_forma_pagamento  = new TDataGridColumn('forma_pagamento', 'Forma Pagamento', 'left');
+    $column_status           = new TDataGridColumn('status', 'Status', 'left');
 
 
     // add the columns to the DataGrid
     $this->datagrid->addColumn($column_id);
     $this->datagrid->addColumn($column_numero);
     $this->datagrid->addColumn($column_created_at);
+    $this->datagrid->addColumn($column_previsao_entrega);
     $this->datagrid->addColumn($column_cliente_id);
     $this->datagrid->addColumn($column_vendedor_id);
     $this->datagrid->addColumn($column_valor_real);
@@ -116,6 +121,13 @@ class VendasList extends TPage
     $column_created_at->setTransformer(function ($value) {
       return TDate::date2br($value);
     });
+
+    $column_previsao_entrega->setTransformer(function ($value) {
+      if ($value)
+        return TDate::date2br($value);
+      return '-';
+    });
+
 
     $column_valor_real->setTransformer(function ($value) {
       return 'R$ ' . number_format($value, 2, ',', '.');
@@ -144,7 +156,11 @@ class VendasList extends TPage
 
 
     $action1 = new TDataGridAction(['VendaView', 'onReload'], ['id' => '{id}']);
+    $action2 = new TDataGridAction([$this, 'onReport'], ['id' => '{id}']);
     $this->datagrid->addAction($action1, 'Visualizar Venda',   'fa:search green');
+    $this->datagrid->addAction($action2, 'Gerar Comprovante',   'fa:check blue');
+
+    //$templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor('storage/modelos/ordem_servico.docx);
 
 
     // create the datagrid model
@@ -163,6 +179,50 @@ class VendasList extends TPage
     $container->add(TPanelGroup::pack('', $this->datagrid, $this->pageNavigation));
 
     parent::add($container);
+  }
+
+
+  public function onReport($param)
+  {
+    try {
+      TTransaction::open('grafica');
+
+      $venda = new Venda($param['id']);
+
+      $parsing = array();
+      $parsing['cliente']   = $venda->cliente->nome;
+      $parsing['endereco']  = $venda->cliente->logradouro . ', ' . $venda->cliente->numero . ' ' . $venda->cliente->bairro . ' - ' . $venda->cliente->cidade->nome;
+      $parsing['documento'] = $venda->cliente->documento;
+      $parsing['valor']     = 'R$: ' . number_format($venda->valor_real, 2, ',', '.');
+      $parsing['entrada']   = 'R$: ' . number_format($venda->totalPago, 2, ',', '.');
+      $parsing['resta']     = 'R$: ' . number_format($venda->valor_real - $venda->totalPago, 2, ',', '.');
+
+
+      $item = array();
+      $aux = array();
+      foreach ($venda->produtos as $produto) {
+        $aux['produto'] = $produto->produto->nome;
+        $aux['altura'] = $produto->altura ? $produto->altura : null;
+        $aux['largura'] = $produto->altura ? $produto->altura : null;
+
+        array_push($item, $aux);
+        unset($aux);
+      }
+
+
+
+      $template = new TemplateProcessor('app/reports/venda_cliente.docx');
+      $template->setValues($parsing);
+
+      $template->cloneBlock('bloco_layout', 0, true, false, $item);
+      $template->saveAs('app/output/' . $venda->numero . '.docx');
+
+      new TMessage('info', 'Documento gerado com sucesso!');
+    } catch (Exception $e) {
+      new TMessage('error', $e->getMessage());
+    } finally {
+      TTransaction::close();
+    }
   }
 
 
@@ -316,42 +376,6 @@ class VendasList extends TPage
       TTransaction::rollback();
     }
   }
-
-  /*
-	/**
-	 * Ask before deletion
-
-	public static function onDelete($param)
-	{
-		// define the delete action
-		$action = new TAction([__CLASS__, 'Delete']);
-		$action->setParameters($param); // pass the key parameter ahead
-
-		// shows a dialog to the user
-		new TQuestion(AdiantiCoreTranslator::translate('Do you really want to delete ?'), $action);
-	}
-
-	/**
-	 * Delete a record
-
-	public static function Delete($param)
-	{
-		try {
-			$key = $param['key']; // get the parameter $key
-			TTransaction::open('grafica'); // open a transaction with database
-			$object = new Venda($key, FALSE); // instantiates the Active Record
-			$object->delete(); // deletes the object from the database
-			TTransaction::close(); // close the transaction
-
-			$pos_action = new TAction([__CLASS__, 'onReload']);
-			new TMessage('info', AdiantiCoreTranslator::translate('Record deleted'), $pos_action); // success message
-		} catch (Exception $e) // in case of exception
-		{
-			new TMessage('error', $e->getMessage()); // shows the exception error message
-			TTransaction::rollback(); // undo all pending operations
-		}
-	}
-	*/
 
   /**
    * method show()

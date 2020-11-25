@@ -76,7 +76,7 @@ class VendaView extends TPage
 
 
       $this->form->addFields([new TLabel('ID: ')], [new TTextDisplay($venda->numero)], [new TLabel('Status: ')], [new TTextDisplay($venda->status)], [new TLabel('Vendedor')], [new TTextDisplay($venda->vendedor->name)]);
-      $this->form->addFields([new TLabel('Total da Venda: ')], [new TTextDisplay('R$ ' . number_format($venda->valor_real, 2, ',', '.'))], [new TLabel('Forma Pagamento')], [new TTextDisplay($venda->forma_pagamento)]);
+      $this->form->addFields([new TLabel('Total da Venda: ')], [new TTextDisplay('R$ ' . number_format($venda->valor_real, 2, ',', '.'))], [new TLabel('Forma Pagamento')], [new TTextDisplay($venda->forma_pagamento)], [new TLabel('Previsão de Entrega')], [new TTextDisplay($venda->previsao_entrega)]);
 
 
       $this->datagridProdutos->addColumn($column_produto_id)->setVisibility(false);
