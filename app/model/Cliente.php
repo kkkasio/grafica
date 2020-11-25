@@ -118,7 +118,7 @@ class Cliente extends TRecord
 
   public function get_cliente()
   {
-    if (empty($this->cidade))
+    if (empty($this->cliente))
       if ($this->tipo === 'Física') {
         $this->cliente = new PessoaFisica($this->id);
       } else {
@@ -126,6 +126,16 @@ class Cliente extends TRecord
       }
 
     return $this->cliente;
+  }
+
+  public function get_documento()
+  {
+    $this->get_cliente();
+
+    if ($this->tipo === 'Física')
+      return $this->cliente->cpf;
+    else
+      return $this->cliente->cnpj;
   }
 
   public function getVendas()
