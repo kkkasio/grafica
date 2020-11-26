@@ -3,3 +3,6 @@ app/database/log.db
 app/database/**.db
 app/config/online/*
 app/config/offline/*
+app/uploads/*
+app/output/*
+.vscode/launch.json
