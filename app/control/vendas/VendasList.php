@@ -196,6 +196,7 @@ class VendasList extends TPage
       $parsing['valor']     = 'R$: ' . number_format($venda->valor_real, 2, ',', '.');
       $parsing['entrada']   = 'R$: ' . number_format($venda->totalPago, 2, ',', '.');
       $parsing['resta']     = 'R$: ' . number_format($venda->valor_real - $venda->totalPago, 2, ',', '.');
+      $parsing['data_entrega'] = TDate::date2br($venda->previsao_entrega);
 
 
       $item = array();
@@ -209,15 +210,18 @@ class VendasList extends TPage
         unset($aux);
       }
 
+      var_dump($venda->cliente->telefone);
+
 
 
       $template = new TemplateProcessor('app/reports/venda_cliente.docx');
       $template->setValues($parsing);
 
       $template->cloneBlock('bloco_layout', 0, true, false, $item);
-      $template->saveAs('app/output/' . $venda->numero . '.docx');
+      //$template->saveAs('app/output/' . $venda->numero . '.docx');
 
       new TMessage('info', 'Documento gerado com sucesso!');
+      //  TPage::openFile('app/output/' . $venda->numero . '.docx');
     } catch (Exception $e) {
       new TMessage('error', $e->getMessage());
     } finally {

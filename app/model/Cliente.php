@@ -133,13 +133,30 @@ class Cliente extends TRecord
     $this->get_cliente();
 
     if ($this->tipo === 'Física')
-      return $this->cliente->cpf;
+      return $this->mask($this->cliente->cpf, '###.###.###-##');
     else
-      return $this->cliente->cnpj;
+      return $this->mask($this->cliente->cnpj, '##.###.###/####-##');
   }
 
   public function getVendas()
   {
     return Venda::where('cliente_id', '=', $this->id)->load();
+  }
+
+  private function mask($value, $mask)
+  {
+    $maskared = '';
+    $k = 0;
+
+    for ($i = 0; $i <= strlen($mask) - 1; $i++) {
+      if ($mask[$i] == '#') {
+        if (isset($value[$k]))
+          $maskared .= $value[$k++];
+      } else {
+        if (isset($mask[$i]))
+          $maskared .= $mask[$i];
+      }
+    }
+    return $maskared;
   }
 }

@@ -187,6 +187,7 @@ class ClienteJuridicoForm extends TPage
     $column_id = new TDataGridColumn('id', '#', 'right');
     $column_numero = new TDataGridColumn('numero', 'Número', 'left');
     $column_created_at = new TDataGridColumn('created_at', 'Data', 'left');
+    $column_previsao_entrega = new TDataGridColumn('previsao_entrega', 'Entrega', 'left');
     $column_vendedor_id = new TDataGridColumn('vendedor->name', 'Vendedor', 'left');
     $column_valor_real = new TDataGridColumn('valor_real', 'Valor Real', 'left');
     $column_forma_pagamento = new TDataGridColumn('forma_pagamento', 'Forma Pagamento', 'left');
@@ -200,6 +201,7 @@ class ClienteJuridicoForm extends TPage
     $this->datagrid->addColumn($column_forma_pagamento);
     $this->datagrid->addColumn($column_status);
     $this->datagrid->addColumn($column_created_at);
+    $this->datagrid->addColumn($column_previsao_entrega);
 
 
     $column_valor_real->setTransformer(function ($value) {
@@ -208,6 +210,10 @@ class ClienteJuridicoForm extends TPage
     });
 
     $column_created_at->setTransformer(function ($value) {
+      return TDate::date2br($value);
+    });
+
+    $column_previsao_entrega->setTransformer(function ($value) {
       return TDate::date2br($value);
     });
 
