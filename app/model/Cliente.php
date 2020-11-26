@@ -70,7 +70,7 @@ class Cliente extends TRecord
     $this->telefones = array();
   }
 
-  public function getTelefone()
+  public function get_telefones()
   {
     return $this->telefones;
   }
@@ -87,7 +87,7 @@ class Cliente extends TRecord
   public function load($id)
   {
 
-    $this->contacts = parent::loadComposite('Telefone', 'cliente_id', $id);
+    $this->telefones = parent::loadComposite('Telefone', 'cliente_id', $id);
 
     // load the object itself
     return parent::load($id);

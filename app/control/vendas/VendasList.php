@@ -189,6 +189,12 @@ class VendasList extends TPage
 
       $venda = new Venda($param['id']);
 
+
+      $telefones = '';
+      foreach ($venda->cliente->telefones as $telefone) {
+        $telefones .= '(' . $telefone->ddd . ')' . ' ' . $telefone->numero . '  ';
+      }
+
       $parsing = array();
       $parsing['cliente']   = $venda->cliente->nome;
       $parsing['endereco']  = $venda->cliente->logradouro . ', ' . $venda->cliente->numero . ' ' . $venda->cliente->bairro . ' - ' . $venda->cliente->cidade->nome;
@@ -197,6 +203,7 @@ class VendasList extends TPage
       $parsing['entrada']   = 'R$: ' . number_format($venda->totalPago, 2, ',', '.');
       $parsing['resta']     = 'R$: ' . number_format($venda->valor_real - $venda->totalPago, 2, ',', '.');
       $parsing['data_entrega'] = TDate::date2br($venda->previsao_entrega);
+      $parsing['telefones'] = $telefones;
 
 
       $item = array();
@@ -210,18 +217,18 @@ class VendasList extends TPage
         unset($aux);
       }
 
-      var_dump($venda->cliente->telefone);
-
 
 
       $template = new TemplateProcessor('app/reports/venda_cliente.docx');
       $template->setValues($parsing);
 
       $template->cloneBlock('bloco_layout', 0, true, false, $item);
-      //$template->saveAs('app/output/' . $venda->numero . '.docx');
+      $template->saveAs('app/output/' . $venda->numero . '.docx');
+
+      //calback com apareer o btn só quando  der ok
 
       new TMessage('info', 'Documento gerado com sucesso!');
-      //  TPage::openFile('app/output/' . $venda->numero . '.docx');
+      TPage::openFile('app/output/' . $venda->numero . '.docx');
     } catch (Exception $e) {
       new TMessage('error', $e->getMessage());
     } finally {
