@@ -1,5 +1,9 @@
 <?php
 // define the autoloader
+
+use Adianti\Core\AdiantiApplicationConfig;
+use Adianti\Core\AdiantiCoreTranslator;
+
 require_once 'lib/adianti/core/AdiantiCoreLoader.php';
 spl_autoload_register(array('Adianti\Core\AdiantiCoreLoader', 'autoload'));
 Adianti\Core\AdiantiCoreLoader::loadClassMap();
